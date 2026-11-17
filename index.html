@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Adivina el número</title>
+  <style>
+    body {
+      font-family: Helvetica, sans-serif;
+      text-align: center;
+      margin-top: 80px;
+      background-color: #f0f4ff;
+    }
+
+    input,
+    button {
+      font-size: 18px;
+      padding: 10px 16px;
+      border-radius: 8px;
+    }
+
+    input {
+      width: 100px;
+      text-align: center;
+      border: 1px solid #999;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #mensaje {
+      font-size: 22px;
+      margin-top: 24px;
+      min-height: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Adivina el número (en mi VM) 🖥️</h1>
+  <p>He pensado un número del 1 al 20. Tienes <span id="restantes">5</span> intentos.</p>
+
+  <input type="number" id="entrada" min="1" max="20">
+  <button onclick="comprobar()">Probar</button>
+  <button onclick="reiniciar()">Nueva partida</button>
+
+  <p id="mensaje"></p>
+
+  <script>
+    const MAXIMO = 5;
+    let secreto = Math.floor(Math.random() * 20) + 1;
+    let intentos = 0;
+    let terminado = false;
+
+    document.getElementById("entrada").addEventListener("keydown", function (evento) {
+      if (evento.key === "Enter") {
+        comprobar();
+      }
+    });
+
+    function comprobar() {
+      if (terminado) return;
+
+      const entrada = document.getElementById("entrada");
+      const mensaje = document.getElementById("mensaje");
+      const respuesta = parseInt(entrada.value);
+
+      if (isNaN(respuesta)) {
+        mensaje.textContent = "Eso no es un número, prueba otra vez.";
+        return;
+      }
+
+      intentos = intentos + 1;
+      document.getElementById("restantes").textContent = MAXIMO - intentos;
+
+      if (respuesta === secreto) {
+        mensaje.textContent = "¡Correcto! Lo has logrado en " + intentos + " intentos 🎉";
+        terminado = true;
+      } else if (intentos >= MAXIMO) {
+        mensaje.textContent = "Has perdido 😢 El número era " + secreto;
+        terminado = true;
+      } else if (respuesta < secreto) {
+        mensaje.textContent = "Más alto ⬆️";
+      } else {
+        mensaje.textContent = "Más bajo ⬇️";
+      }
+
+      entrada.value = "";
+      entrada.focus();
+    }
+
+    function reiniciar() {
+      secreto = Math.floor(Math.random() * 20) + 1;
+      intentos = 0;
+      terminado = false;
+      document.getElementById("restantes").textContent = MAXIMO;
+      document.getElementById("mensaje").textContent = "";
+      document.getElementById("entrada").value = "";
+    }
+  </script>
+</body>
+
+</html>
